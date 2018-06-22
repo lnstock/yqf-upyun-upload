@@ -6,6 +6,8 @@ function createReq(endpoint, bucket, authorization, xdate) {
         maxRedirects: 0,
     })
 
+    let path
+
     req.interceptors.request.use((config) => {
         let method = config.method.toUpperCase()
         config.url = encodeURI(config.url)
@@ -34,7 +36,10 @@ function createReq(endpoint, bucket, authorization, xdate) {
             }
         }
     )
-    return req
+    return {
+        req:req,
+        path:path
+    }
 }
 
 const endpoint = {
