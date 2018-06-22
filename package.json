@@ -1,0 +1,44 @@
+{
+  "name": "yqf-upyun-upload",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/upyun.js",
+  "scripts": {
+    "build": "node build/build.js",
+    "prepublish": "npm run build",
+    "sample": "node ./sample/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lnstock/yqf-upyun-upload.git"
+  },
+  "keywords": [
+    "yqf"
+  ],
+  "author": "LN",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lnstock/yqf-upyun-upload/issues"
+  },
+  "homepage": "https://github.com/lnstock/yqf-upyun-upload#readme",
+  "dependencies": {
+    "axios": "^0.18.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.4.0",
+    "babel-register": "^6.24.1",
+    "rollup": "^0.41.6",
+    "rollup-plugin-alias": "^1.3.1",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-json": "^2.1.1",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "should": "^9.0.2",
+    "uglify-js": "^3.0.11",
+    "webpack": "^2.5.1"
+  }
+}
