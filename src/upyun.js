@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-function createReq(endpoint, bucket, remotePath, getHeaderSign) {
+function createReq(endpoint, bucket, authorization, xdate) {
     const req = axios.create({
         baseURL: endpoint + '/' + bucket,
         maxRedirects: 0,
@@ -10,10 +10,11 @@ function createReq(endpoint, bucket, remotePath, getHeaderSign) {
         let method = config.method.toUpperCase()
         config.url = encodeURI(config.url)
 
-        return getHeaderSign(bucket, method, remotePath).then((headers) => {
-            config.headers.common = headers
-            return Promise.resolve(config)
-        })
+        config.headers.common = {
+            'Authorization': authorization,
+            'X-Date': xdate
+        }
+        return Promise.resolve(config)
     }, error => {
         throw new Error('upyun - request failed: ' + error.message)
     })
@@ -42,28 +43,16 @@ const endpoint = {
 }
 
 export default class upyun {
-    static upload(bucket, getHeaderSign, remotePath, localFile) {
-        var req = createReq(endpoint.protocol + '://' + endpoint.domain, bucket, remotePath, getHeaderSign)
-
-        return req.put(remotePath, localFile, {
-            
-        }).then(({ headers: responseHeaders, status }) => {
-            if (status !== 200) {
-                return Promise.resolve(false)
-            }
-
-            let params = ['x-upyun-width', 'x-upyun-height', 'x-upyun-file-type', 'x-upyun-frames']
-            let result = {}
-            params.forEach(item => {
-                let key = item.split('x-upyun-')[1]
-                if (responseHeaders[item]) {
-                    result[key] = responseHeaders[item]
-                    if (key !== 'file-type') {
-                        result[key] = parseInt(result[key], 10)
-                    }
+    static upload(bucket, getHeaderSign, localFile) {
+        getHeaderSign(bucket, method).then(sign => {
+            var req = createReq(endpoint.protocol + '://' + endpoint.domain, bucket, sign.Authorization, sign.XDate)
+            req.put(remotePath, localFile).then(({ headers: responseHeaders, status })=>{
+                if (status !== 200) {
+                    return Promise.reject(status)
                 }
+
+                return Promise.resolve(headers)
             })
-            return Promise.resolve(Object.keys(result).length > 0 ? result : true)
         })
     }
 }

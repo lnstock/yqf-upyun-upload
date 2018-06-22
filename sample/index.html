@@ -12,18 +12,19 @@
     <input type="file" id="file" name="file">
     <input type="submit" value="upload" onclick="upload()">
     <script>
-        function getHeaderSign(bucket, method, path) {
+        function getHeaderSign(bucket, method) {
+            console.log([bucket, method])
             return Promise.resolve({
                 'Authorization':'',
-                'X-Date': ''
+                'XDate': '',
+                'Path': ''
             })
         }
 
         function upload() {
             var file = document.getElementById('file').files[0]
-            path = '/sample-upload-' + file.name
 
-            upyun.upload('sitegroup', getHeaderSign, path, file).then(function (result) {
+            upyun.upload('sitegroup', getHeaderSign, file).then(function (result) {
                 console.log(result)
             })
         }
