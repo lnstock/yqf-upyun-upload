@@ -1,7 +1,6 @@
 /**
-  * UPYUN js-sdk 1.0.0
+  * YIQIFEI upyun-sdk 1.0.1
   * (c) 2018
-  * @license MIT
   */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('axios')) :

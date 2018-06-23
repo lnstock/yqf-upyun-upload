@@ -10,7 +10,6 @@ const uglify = require('uglify-js')
 const rollup = require('rollup')
 const babel = require('rollup-plugin-babel')
 const cjs = require('rollup-plugin-commonjs')
-const json = require('rollup-plugin-json')
 const node = require('rollup-plugin-node-resolve')
 const pkg = require('../package.json')
 const resolve = _path => path.resolve(__dirname, _path)
@@ -18,9 +17,8 @@ const version = process.env.VERSION || pkg.version
 
 const banner =
 `/**
-  * UPYUN js-sdk ${version}
+  * YIQIFEI upyun-sdk ${version}
   * (c) ${new Date().getFullYear()}
-  * @license MIT
   */`
 
 if (!fs.existsSync('dist')) {
@@ -52,7 +50,6 @@ function genConfig (opts) {
         preferBuiltins: !opts.isBrowser
       }),
       cjs(),
-      json(),
       babel({
         babelrc: false,
         plugins: ['external-helpers'],
