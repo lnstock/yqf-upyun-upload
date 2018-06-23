@@ -6,17 +6,13 @@ function createReq(endpoint, bucket, authorization, xdate) {
         maxRedirects: 0,
     })
 
-    let path
-
-    req.interceptors.request.use((config) => {
-        let method = config.method.toUpperCase()
-        config.url = encodeURI(config.url)
-
-        config.headers.common = {
+    req.interceptors.request.use((request) => {
+        request.url = encodeURI(request.url)
+        request.headers.common = {
             'Authorization': authorization,
             'X-Date': xdate
         }
-        return Promise.resolve(config)
+        return request
     }, error => {
         throw new Error('upyun - request failed: ' + error.message)
     })
@@ -36,10 +32,7 @@ function createReq(endpoint, bucket, authorization, xdate) {
             }
         }
     )
-    return {
-        req:req,
-        path:path
-    }
+    return req
 }
 
 const endpoint = {
@@ -48,15 +41,35 @@ const endpoint = {
 }
 
 export default class upyun {
-    static upload(bucket, getHeaderSign, localFile) {
-        getHeaderSign(bucket, method).then(sign => {
+    static upload(bucket, localFile, getHeaderSign) {
+        return getHeaderSign(bucket, 'PUT', localFile.name).then(sign => {
             var req = createReq(endpoint.protocol + '://' + endpoint.domain, bucket, sign.Authorization, sign.XDate)
-            req.put(remotePath, localFile).then(({ headers: responseHeaders, status })=>{
+            return req.put(sign.Path, localFile).then(({ headers: responseHeaders, status }) => {
                 if (status !== 200) {
-                    return Promise.reject(status)
+                    return Promise.resolve(false)
                 }
 
-                return Promise.resolve(headers)
+                console.log(responseHeaders)
+                if (/image\/.+/.test(responseHeaders['content-type'])) {
+
+                }
+
+                req.head(sign.Path).then(({ headers, status }) => {
+                   console.log(headers)
+                })
+
+                let params = ['x-upyun-width', 'x-upyun-height', 'x-upyun-file-type', 'x-upyun-frames']
+                let result = {}
+                params.forEach(item => {
+                    let key = item.split('x-upyun-')[1]
+                    if (responseHeaders[item]) {
+                        result[key] = responseHeaders[item]
+                        if (key !== 'file-type') {
+                            result[key] = parseInt(result[key], 10)
+                        }
+                    }
+                })
+                return Promise.resolve(Object.keys(result).length > 0 ? result : true)
             })
         })
     }

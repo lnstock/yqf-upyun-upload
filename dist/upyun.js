@@ -41,15 +41,13 @@ function createReq(endpoint, bucket, authorization, xdate) {
         maxRedirects: 0
     });
 
-    req.interceptors.request.use(function (config) {
-        var method = config.method.toUpperCase();
-        config.url = encodeURI(config.url);
-
-        config.headers.common = {
+    req.interceptors.request.use(function (request) {
+        request.url = encodeURI(request.url);
+        request.headers.common = {
             'Authorization': authorization,
             'X-Date': xdate
         };
-        return Promise.resolve(config);
+        return request;
     }, function (error) {
         throw new Error('upyun - request failed: ' + error.message);
     });
@@ -84,18 +82,39 @@ var upyun = function () {
 
     createClass(upyun, null, [{
         key: 'upload',
-        value: function upload(bucket, getHeaderSign, localFile) {
-            getHeaderSign(bucket, method).then(function (sign) {
+        value: function upload(bucket, localFile, getHeaderSign) {
+            return getHeaderSign(bucket, 'PUT', localFile.name).then(function (sign) {
                 var req = createReq(endpoint.protocol + '://' + endpoint.domain, bucket, sign.Authorization, sign.XDate);
-                req.put(remotePath, localFile).then(function (_ref) {
+                return req.put(sign.Path, localFile).then(function (_ref) {
                     var responseHeaders = _ref.headers,
                         status = _ref.status;
 
                     if (status !== 200) {
-                        return Promise.reject(status);
+                        return Promise.resolve(false);
                     }
 
-                    return Promise.resolve(headers);
+                    console.log(responseHeaders);
+                    if (/image\/.+/.test(responseHeaders['content-type'])) {}
+
+                    req.head(sign.Path).then(function (_ref2) {
+                        var headers = _ref2.headers,
+                            status = _ref2.status;
+
+                        console.log(headers);
+                    });
+
+                    var params = ['x-upyun-width', 'x-upyun-height', 'x-upyun-file-type', 'x-upyun-frames'];
+                    var result = {};
+                    params.forEach(function (item) {
+                        var key = item.split('x-upyun-')[1];
+                        if (responseHeaders[item]) {
+                            result[key] = responseHeaders[item];
+                            if (key !== 'file-type') {
+                                result[key] = parseInt(result[key], 10);
+                            }
+                        }
+                    });
+                    return Promise.resolve(Object.keys(result).length > 0 ? result : true);
                 });
             });
         }

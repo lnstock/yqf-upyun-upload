@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node build/build.js",
     "prepublish": "npm run build",
-    "sample": "node ./sample/server.js"
+    "sample": "npm run build && node ./sample/server.js"
   },
   "repository": {
     "type": "git",
