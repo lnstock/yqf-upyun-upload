@@ -48,7 +48,7 @@ export default class upyun {
             var path = sign.Path || sign.path;
 
             var req = createReq(endpoint.protocol + '://' + endpoint.domain, bucket, authorization, xDate)
-            return req.put(sign.Path, localFile).then(({ headers: responseHeaders, status }) => {
+            return req.put(path, localFile).then(({ headers: responseHeaders, status }) => {
                 return Promise.resolve({
                     bucket: bucket,
                     path: path
