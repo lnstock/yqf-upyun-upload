@@ -42,7 +42,7 @@ const endpoint = {
 
 export default class upyun {
     static upload(bucket, localFile, getHeaderSign) {
-        return getHeaderSign(bucket, 'PUT', localFile.name).then(sign => {
+        return getHeaderSign(bucket, 'PUT', localFile.type).then(sign => {
             var authorization = sign.Authorization || sign.authorization;
             var xDate = sign.XDate || sign.xDate || sign.xdate;
             var path = sign.Path || sign.path;

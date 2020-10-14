@@ -1,5 +1,5 @@
 /**
-  * YIQIFEI upyun-sdk 1.0.2
+  * YIQIFEI upyun-sdk 1.0.3
   * (c) 2020
   */
 (function (global, factory) {
@@ -88,7 +88,7 @@ var upyun = function () {
                 var path = sign.Path || sign.path;
 
                 var req = createReq(endpoint.protocol + '://' + endpoint.domain, bucket, authorization, xDate);
-                return req.put(sign.Path, localFile).then(function (_ref) {
+                return req.put(path, localFile).then(function (_ref) {
                     var responseHeaders = _ref.headers,
                         status = _ref.status;
 
