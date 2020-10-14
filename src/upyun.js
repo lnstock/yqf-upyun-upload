@@ -43,11 +43,15 @@ const endpoint = {
 export default class upyun {
     static upload(bucket, localFile, getHeaderSign) {
         return getHeaderSign(bucket, 'PUT', localFile.name).then(sign => {
-            var req = createReq(endpoint.protocol + '://' + endpoint.domain, bucket, sign.Authorization, sign.XDate)
+            var authorization = sign.Authorization || sign.authorization;
+            var xDate = sign.XDate || sign.xDate || sign.xdate;
+            var path = sign.Path || sign.path;
+
+            var req = createReq(endpoint.protocol + '://' + endpoint.domain, bucket, authorization, xDate)
             return req.put(sign.Path, localFile).then(({ headers: responseHeaders, status }) => {
                 return Promise.resolve({
                     bucket: bucket,
-                    path: sign.Path
+                    path: path
                 })
             })
         })
