@@ -1,5 +1,5 @@
 /**
-  * YIQIFEI upyun-sdk 1.0.3
+  * YIQIFEI upyun-sdk 1.0.4
   * (c) 2020
   */
 (function (global, factory) {
@@ -82,7 +82,7 @@ var upyun = function () {
     createClass(upyun, null, [{
         key: 'upload',
         value: function upload(bucket, localFile, getHeaderSign) {
-            return getHeaderSign(bucket, 'PUT', localFile.name).then(function (sign) {
+            return getHeaderSign(bucket, 'PUT', localFile.type).then(function (sign) {
                 var authorization = sign.Authorization || sign.authorization;
                 var xDate = sign.XDate || sign.xDate || sign.xdate;
                 var path = sign.Path || sign.path;
