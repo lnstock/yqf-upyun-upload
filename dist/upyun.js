@@ -1,6 +1,6 @@
 /**
-  * YIQIFEI upyun-sdk 1.0.1
-  * (c) 2018
+  * YIQIFEI upyun-sdk 1.0.2
+  * (c) 2020
   */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('axios')) :
@@ -83,14 +83,18 @@ var upyun = function () {
         key: 'upload',
         value: function upload(bucket, localFile, getHeaderSign) {
             return getHeaderSign(bucket, 'PUT', localFile.name).then(function (sign) {
-                var req = createReq(endpoint.protocol + '://' + endpoint.domain, bucket, sign.Authorization, sign.XDate);
+                var authorization = sign.Authorization || sign.authorization;
+                var xDate = sign.XDate || sign.xDate || sign.xdate;
+                var path = sign.Path || sign.path;
+
+                var req = createReq(endpoint.protocol + '://' + endpoint.domain, bucket, authorization, xDate);
                 return req.put(sign.Path, localFile).then(function (_ref) {
                     var responseHeaders = _ref.headers,
                         status = _ref.status;
 
                     return Promise.resolve({
                         bucket: bucket,
-                        path: sign.Path
+                        path: path
                     });
                 });
             });
