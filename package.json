@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/lnstock/yqf-upyun-upload#readme",
   "dependencies": {
-    "axios": "^0.18.0"
+    "axios": "^0.21.1"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
